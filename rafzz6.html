@@ -1,457 +1,283 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ RAFZZSTORE - Digital SPA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+    <title>RIRI - TT DOWN CP</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        /* ========================================================= */
-        /* GLOBAL STYLES & VARIABLES */
-        /* ========================================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+
         :root {
-            --neon-blue: #00e5ff;
-            --neon-purple: #ae00ff;
-            --dark-bg: #11081a; 
-            --mid-dark-bg: #221035;
-            --light-text: #f0f0f0;
-            --bottom-nav-height: 70px;
-            --transition-speed: 0.3s ease-in-out;
+            --cyan: #00f2ea;
+            --pink: #ff0050;
+            --dark-bg: rgba(10, 10, 20, 0.7);
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--dark-bg);
-            color: var(--light-text);
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            line-height: 1.6;
-            
-            /* FIX: Background Gambar BARU dari URL yang Diberikan User */
-            background-image: url('https://files.catbox.moe/j59xq3.jpg'); 
-            background-attachment: fixed; /* Parallax Effect */
+            /* Background Foto tema Cyberpunk/Dark City biar gak polos */
+            background: url('https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070') no-repeat center center fixed;
             background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            
-            /* Overlay untuk membuat teks lebih terbaca */
-            position: relative;
-            z-index: 1;
+            font-family: 'DotGothic16', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
         }
 
-        /* Overlay untuk body background (PENTING untuk menjaga teks neon tetap terlihat) */
-        body::before {
-            content: '';
+        .overlay {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            /* Sesuaikan nilai rgba(17, 8, 26, 0.7) ini jika gambar baru terlalu gelap atau terang */
-            background-color: rgba(17, 8, 26, 0.7); /* Lebih gelap dari dark-bg (70% Opacity) */
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
             z-index: -1;
         }
 
-        /* --- Tampilan Konten Utama (SPA) --- */
-        #main-content {
-            padding: 20px 20px 0;
-            min-height: calc(100vh - var(--bottom-nav-height));
-            overflow-y: auto; 
-            position: relative; 
-            z-index: 2;
+        .container {
+            width: 95%;
+            max-width: 420px;
+            text-align: center;
+            padding: 30px;
+            /* Border Gradasi Biru + Pink */
+            border: 3px solid;
+            border-image: linear-gradient(45deg, var(--cyan), var(--pink)) 1;
+            background: var(--dark-bg);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 0 25px rgba(0, 242, 234, 0.2);
+            animation: slideUp 0.8s ease-out;
         }
 
-        /* Semua section disembunyikan secara default */
-        section {
-            display: none;
-            padding: 20px 0;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        /* Hanya section aktif yang ditampilkan */
-        section.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Header Neon Utama */
-        .page-header {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 3em;
-            color: var(--neon-blue);
-            text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.8rem;
+            color: #fff;
+            /* Shadow Patah-patah Biru + Pink */
+            text-shadow: 4px 4px var(--pink), 8px 8px var(--cyan);
             margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .subtitle {
+            font-size: 0.75rem;
+            color: var(--cyan);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        /* INPUT - Transparan Biru Neon */
+        input {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 2px solid var(--cyan);
+            color: var(--cyan);
+            font-family: 'DotGothic16', sans-serif;
+            margin-bottom: 20px;
+            outline: none;
             text-align: center;
+            transition: 0.3s;
         }
 
-        /* Welcome banner style */
-        .welcome-banner {
-            font-family: 'Roboto', sans-serif;
-            font-size: 1.3em;
-            font-weight: 700;
-            color: var(--neon-purple);
-            text-shadow: 0 0 5px var(--neon-purple), 0 0 10px rgba(174, 0, 255, 0.5);
-            padding: 10px 0;
-            text-align: center;
-            margin-bottom: 30px;
-            letter-spacing: 0.5px;
-        }
-        
-        /* ========================================================= */
-        /* LAYOUT FOR HOME SECTION (Blok Kecilin) */
-        /* ========================================================= */
-        
-        .home-content-split {
-            display: flex;
-            gap: 40px; 
-            max-width: 1000px; /* Batasi lebar container utama (Blok Kecil di Desktop) */
-            margin: 0 auto 30px;
-            align-items: flex-start; 
-        }
-        
-        /* Setelah social link di home dihapus, biarkan col-left tetap lebar */
-        .col-left {
-            flex: 2; 
-            min-width: 0;
-        }
-        
-        .col-right {
-            flex: 1; 
-            padding: 20px;
-            background-color: var(--mid-dark-bg);
-            border-radius: 15px;
-            border: 2px solid var(--neon-blue);
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
-            min-width: 0;
+        input:focus {
+            border-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 242, 234, 0.5);
+            background: rgba(0, 242, 234, 0.05);
         }
 
-        /* --- HOME SOCIAL LINK GRID STYLES (Dihapus dari Home) --- */
-        /* Kelas ini tidak lagi digunakan di section #home */
+        .btn-group { display: flex; gap: 15px; }
 
-        /* ========================================================= */
-        /* BOTTOM NAVIGATION (Dipertahankan) */
-        /* ========================================================= */
-        #bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--bottom-nav-height);
-            background: var(--mid-dark-bg);
-            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5), 0 -2px 10px var(--neon-purple);
-            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
-        }
-        #bottom-nav a {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; height: 100%; padding: 5px 0; text-decoration: none;
-            color: rgba(255, 255, 255, 0.5); 
-            transition: all 0.3s ease; font-size: 0.75em; font-weight: 700;
-        }
-        #bottom-nav a i {
-            font-size: 1.6em; margin-bottom: 3px; transition: color 0.3s, text-shadow 0.3s;
-        }
-        #bottom-nav a.active {
-            color: #fff; background-color: #3f1e64;
-        }
-        #bottom-nav a.active i {
-            color: var(--neon-blue);
-            text-shadow: 0 0 10px var(--neon-blue), 0 0 15px var(--neon-blue);
-        }
-
-        /* --- Existing Styles (Produk, Payment, Profile, Contact) --- */
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
-        .product-card { background-color: var(--mid-dark-bg); border-radius: 12px; border: 2px solid var(--neon-purple); box-shadow: 0 0 15px rgba(174, 0, 255, 0.4); overflow: hidden; }
-        .product-image { width: 100%; height: 180px; object-fit: cover; border-bottom: 2px solid var(--neon-blue); }
-        .product-details { padding: 15px; }
-        .qr-card { flex: 1 1 300px; background-color: var(--mid-dark-bg); padding: 30px; border-radius: 12px; border: 2px solid var(--neon-blue); box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); text-align: center; }
-        .payment-container { display: flex; gap: 40px; margin-top: 40px; flex-wrap: wrap; justify-content: center; }
-        .info-block { background-color: var(--mid-dark-bg); padding: 30px; border-radius: 12px; border: 2px solid var(--neon-purple); box-shadow: 0 0 15px rgba(174, 0, 255, 0.4); margin-top: 20px; }
-        .profile-photo { width: 150px; height: 150px; border-radius: 50%; border: 5px solid var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); margin-bottom: 20px; }
-        
-        /* CSS LAMA SOSMED (dinonaktifkan/diganti) */
-        /* .sosmed-grid { display: flex; justify-content: center; gap: 20px; margin-top: 30px; }
-        .sosmed-link img { width: 60px; height: 60px; border-radius: 5px; object-fit: cover; border: 2px solid var(--neon-blue); box-shadow: 0 0 10px rgba(0, 229, 255, 0.5); } */
-        
-        /* ========================================================= */
-        /* --- STYLING BARU UNTUK BLOK SOSMED DI PROFILE --- */
-        /* ========================================================= */
-        .sosmed-block-grid {
-            display: flex;
-            flex-wrap: wrap; 
-            justify-content: center;
-            gap: 15px; 
-            margin-top: 30px;
-        }
-
-        .sosmed-block-link {
-            display: flex;
-            flex-direction: column; 
-            align-items: center;
-            justify-content: center;
-            width: 120px; 
-            height: 100px; 
-            border-radius: 10px;
-            padding: 10px;
-            text-decoration: none;
-            color: var(--light-text);
-            background-color: var(--mid-dark-bg);
-            border: 2px solid var(--neon-purple);
-            box-shadow: 0 0 10px rgba(174, 0, 255, 0.2);
-            transition: all 0.3s ease-in-out;
-        }
-
-        .sosmed-block-link:hover {
-            transform: translateY(-5px);
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 15px var(--neon-blue);
-        }
-
-        .sosmed-block-link i {
-            font-size: 2.5em; 
-            margin-bottom: 5px;
-            color: var(--neon-blue);
-            transition: color 0.3s;
-        }
-
-        .sosmed-block-link span {
-            font-size: 0.9em;
+        /* GHOST BUTTON BLUE & PINK */
+        button {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            font-family: 'DotGothic16', sans-serif;
+            font-size: 1rem;
             font-weight: bold;
-            text-shadow: 0 0 5px rgba(0, 229, 255, 0.5);
+            text-transform: uppercase;
+            transition: all 0.3s;
+            position: relative;
         }
-        /* ========================================================= */
 
+        /* Tombol MP4 (Biru) */
+        button.btn-mp4 {
+            border: 2px solid var(--cyan);
+            color: var(--cyan);
+        }
+        button.btn-mp4:hover {
+            background: var(--cyan);
+            color: #000;
+            box-shadow: 0 0 25px var(--cyan);
+            transform: translateY(-3px);
+        }
 
-        /* Media Queries (Pengecilan Blok untuk Mobile) */
-        @media (max-width: 768px) {
-            .page-header { font-size: 2.5em; } 
-            .welcome-banner { font-size: 1.1em; } 
-            #main-content { padding: 15px 10px 0; }
-            
-            /* Pada layar kecil, ubah layout menjadi tumpukan */
-            .home-content-split {
-                flex-direction: column; 
-                gap: 20px;
-            }
-            .col-right {
-                max-width: 100%; 
-                margin: 0 auto;
-            }
-            .social-link-grid {
-                grid-template-columns: 1fr; 
-                gap: 15px;
-            }
-            
-            /* Pengecilan Blok Produk */
-            .product-grid {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-            }
-            
-            /* Pengecilan Blok Sosmed untuk Mobile */
-            .sosmed-block-link {
-                width: 100px; 
-                height: 80px;
-            }
-            .sosmed-block-link i {
-                font-size: 2em;
-            }
+        /* Tombol MP3 (Pink) */
+        button.btn-mp3 {
+            border: 2px solid var(--pink);
+            color: var(--pink);
+        }
+        button.btn-mp3:hover {
+            background: var(--pink);
+            color: #fff;
+            box-shadow: 0 0 25px var(--pink);
+            transform: translateY(-3px);
+        }
+
+        button:active { transform: scale(0.95); }
+
+        /* REACT EMOJI LOVE RIRI 💖 */
+        .emoji-react {
+            position: absolute;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 99;
+            filter: drop-shadow(0 0 8px #fff);
+        }
+
+        .react-click { animation: flyUp 1s ease-out forwards; }
+        .react-rain { animation: rainUp 0.8s ease-out forwards; }
+
+        @keyframes flyUp {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            50% { opacity: 1; transform: translate(-50%, -100%) scale(1.2); }
+            100% { transform: translate(-50%, -200px) scale(1.5); opacity: 0; }
+        }
+
+        @keyframes rainUp {
+            0% { transform: translateY(0) scale(0.8); opacity: 1; }
+            100% { transform: translateY(-120px) scale(1.3); opacity: 0; }
+        }
+
+        /* RESULT & LOAD */
+        #loader { display: none; margin: 20px auto; color: var(--pink); font-size: 1rem; letter-spacing: 2px; }
+        
+        #result {
+            margin-top: 25px;
+            display: none;
+            border: 1px dashed var(--cyan);
+            padding: 15px;
+            animation: fadeIn 0.4s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .thumb {
+            width: 100px; height: 100px;
+            border: 2px solid var(--pink);
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        /* Tombol Download Gradasi */
+        .dl-btn {
+            display: block;
+            margin-top: 15px;
+            border: 2px solid;
+            border-image: linear-gradient(to right, var(--cyan), var(--pink)) 1;
+            background: transparent;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .dl-btn:hover {
+            background: linear-gradient(to right, var(--cyan), var(--pink));
+            box-shadow: 0 0 20px rgba(0, 242, 234, 0.3);
+            color: #000;
         }
     </style>
 </head>
 <body>
 
-    <main id="main-content">
-        <section id="home" class="active">
-            <h1 class="page-header" style="text-align: center;">🔗 RAFZZSTORE</h1>
-            
-            <p class="welcome-banner">
-                👋 Selamat datang di website rafzzstore! Temukan produk digital terbaik Anda di sini.
-            </p>
+    <div class="overlay"></div>
 
-            <div class="home-content-split">
-                
-                <div class="col-left" style="flex: 3; text-align: center;"> 
-                    <p style="text-align: center; margin-bottom: 30px; color: rgba(255, 255, 255, 0.7);">
-                        Kami adalah solusi terdepan untuk kebutuhan produk digital Anda. Kecepatan dan keamanan terjamin!
-                    </p>
-                    <p style="margin-top: 20px; font-style: italic;">
-                        Lihat semua produk kami di menu **Produk**, atau cek kontak di menu **Profil**.
-                    </p>
-                </div>
-                <div class="col-right" style="flex: 1;">
-                    <h3 style="color: var(--neon-blue); margin-top: 0;">⚡ Fitur Utama</h3>
-                    <p>Proses tercepat, produk aman, dan layanan pelanggan 24 jam siap membantu Anda.</p>
-                    
-                    <h3 style="color: var(--neon-purple); margin-top: 20px;">🔥 Link Penting</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 10px;">
-                            <a href="#" style="color: var(--light-text); text-decoration: none; font-weight: bold; transition: color 0.3s;" onmouseover="this.style.color='var(--neon-blue)'" onmouseout="this.style.color='var(--light-text)'">
-                                <i class="fas fa-arrow-right"></i> Lihat Diskon Hari Ini
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" style="color: var(--light-text); text-decoration: none; font-weight: bold; transition: color 0.3s;" onmouseover="this.style.color='var(--neon-blue)'" onmouseout="this.style.color='var(--light-text)'">
-                                <i class="fas fa-arrow-right"></i> Panduan Pembelian
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+    <div class="container">
+        <h1>RIRI</h1>
+        <p class="subtitle">-- CYBER_PROTOCOL --</p>
+        
+        <input type="text" id="urlInput" placeholder="> LINK_TARGET_HERE">
+        
+        <div class="btn-group">
+            <button class="btn-mp4" onclick="proses('video')">GET_MP4</button>
+            <button class="btn-mp3" onclick="proses('audio')">GET_MP3</button>
+        </div>
 
-            </div>
-            <div style="text-align: center; margin-top: 40px;">
-                <p style="color: var(--neon-purple); font-weight: bold;">[Silakan gunakan navigasi di bawah untuk menjelajahi toko!]</p>
-            </div>
-        </section>
+        <div id="loader">RUNNING_API_SCAN...</div>
 
-        <section id="products">
-            <h1 class="page-header">📦 Produk Unggulan</h1>
-            <div class="product-grid">
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1542831371-d10be22e1e0d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NDcwMDJ8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwcHJvZHVjdHxlbnwwfHx8fDE2OTkyMjgxMjN8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Item Premium A" class="product-image">
-                    <div class="product-details">
-                        <h3>Item Premium A</h3>
-                        <p>Deskripsi singkat tentang item terbaik dari rafzzstore.</p>
-                        <p style="font-weight: bold; color: var(--neon-purple); margin-top: 10px;">Rp 50.000,-</p>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1593642702749-b7d2a8047fa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NDcwMDJ8MHwxfHNlYXJjaHw3fHxkaWdpdGFsJTIwcHJvZHVjdHxlbnwwfHx8fDE2OTkyMjgxMjN8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Item Standar B" class="product-image">
-                    <div class="product-details">
-                        <h3>Item Standar B</h3>
-                        <p>Produk dengan harga terjangkau dan kualitas terjamin.</p>
-                        <p style="font-weight: bold; color: var(--neon-purple); margin-top: 10px;">Rp 25.000,-</p>
-                    </div>
-                </div>
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1518770660439-463619098795?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NDcwMDJ8MHwxfHNlYXJjaHwyMHx8ZGlnaXRhbCUyMHByb2R1Y3R8ZW58MHx8fDE2OTkyMjgxMjN8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Item Khusus C" class="product-image">
-                    <div class="product-details">
-                        <h3>Item Khusus C</h3>
-                        <p>Edisi terbatas, segera dapatkan sebelum kehabisan!</p>
-                        <p style="font-weight: bold; color: var(--neon-purple); margin-top: 10px;">Rp 32.000,-</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="payment">
-            <h1 class="page-header">💳 Proses Pembayaran</h1>
-            <p style="text-align: center;">Lakukan pembayaran melalui QRIS atau E-Wallet, lalu konfirmasi via WhatsApp.</p>
-            <div class="payment-container">
-                <div class="qr-card">
-                    <h3>Bayar Via QRIS</h3>
-                    <p>Scan QR Code ini dari semua aplikasi E-Wallet.</p>
-                    <img src="https://images.unsplash.com/photo-1627993078426-38d998273611?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NDcwMDJ8MHwxfHNlYXJjaHwyMHx8cXJpcyUyMGNvZGV8ZW58MHx8fHwxNjk5MjI5MTA1fDA&ixlib=rb-4.0.3&q=80&w=1080" alt="QRIS Code" style="width: 200px; height: 200px; object-fit: contain;">
-                    <p style="color: var(--neon-blue); font-weight: bold;">Nama Merchant: RAFZZSTORE DIGITAL</p>
-                </div>
-                <div class="qr-card">
-                    <h3>Transfer E-Wallet / VA</h3>
-                    <ul style="list-style: none; padding: 0; text-align: left; margin-top: 10px;">
-                        <li style="margin-bottom: 10px;"><i class="fas fa-wallet" style="color: var(--neon-purple);"></i> **OVO:** 0812-XXXX-1111</li>
-                        <li style="margin-bottom: 10px;"><i class="fas fa-wallet" style="color: var(--neon-purple);"></i> **GOPAY:** 0812-XXXX-2222</li>
-                        <li style="margin-bottom: 10px;"><i class="fas fa-qrcode" style="color: var(--neon-purple);"></i> **Bank VA:** 8888-9999-XXXX</li>
-                    </ul>
-                </div>
-            </div>
-            <div style="text-align: center;">
-                <a href="https://wa.me/6281234567890?text=Halo%2C%20saya%20sudah%20melakukan%20pembayaran.%20Berikut%20bukti%20transfernya%20[Nama%20Produk]." target="_blank" class="wa-button" style="display: inline-block; background-color: #25D366; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; margin-top: 30px; font-weight: bold; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);">
-                    <i class="fab fa-whatsapp"></i> KONFIRMASI & KIRIM BUKTI VIA WA
-                </a>
-            </div>
-        </section>
-
-        <section id="description">
-            <h1 class="page-header">📝 Tentang Kami</h1>
-            <div class="info-block">
-                <h3 style="color: var(--neon-blue); margin-top: 0;">Filosofi Rafzzstore</h3>
-                <p>Didirikan dengan passion untuk menyediakan produk digital dan layanan terbaik. Kami berpegangan pada prinsip transparansi, kecepatan, dan kepuasan pelanggan.</p>
-                <p>Kami hadir untuk menjadi solusi digital Anda yang terpercaya dan selalu mengutamakan kualitas dalam setiap transaksi.</p>
-            </div>
-        </section>
-
-        <section id="profile">
-            <h1 class="page-header">👤 Profile RafzzTzy</h1>
-            <div id="profile-content" style="text-align: center;">
-                <img src="https://files.catbox.moe/j59xq3.jpg" alt="Foto Profil Owner" class="profile-photo"> 
-                <h3 style="color: var(--neon-blue); margin-bottom: 5px;">RafzzTzy</h3>
-                <p style="color: var(--neon-purple); font-weight: bold;">Dev Pemula Cuk</p>
-                <p style="margin-top: 20px;">"Kualitas dan kepercayaan adalah aset terpenting yang kami tawarkan kepada setiap pelanggan."</p>
-
-                <div class="sosmed-block-grid">
-                    <a href="https://wa.me/6281234567890" target="_blank" class="sosmed-block-link whatsapp">
-                        <i class="fab fa-whatsapp"></i>
-                        <span>WhatsApp</span>
-                    </a>
-                    <a href="https://t.me/telegram_anda" target="_blank" class="sosmed-block-link telegram">
-                        <i class="fab fa-telegram-plane"></i>
-                        <span>Telegram</span>
-                    </a>
-                    <a href="https://whatsapp.com/channel/00000000000" target="_blank" class="sosmed-block-link wa-channel">
-                        <i class="fab fa-whatsapp-square"></i>
-                        <span>WA Channel</span>
-                    </a>
-                    <a href="https://instagram.com/akun_anda" target="_blank" class="sosmed-block-link instagram">
-                        <i class="fab fa-instagram"></i>
-                        <span>Instagram</span>
-                    </a>
-                </div>
-                </div>
-        </section>
-
-        <section id="contact">
-            <h1 class="page-header">📞 Kontak Kami</h1>
-            <div class="info-block" style="text-align: left;">
-                <p style="margin-bottom: 20px;">Kami selalu siap membantu. Hubungi tim support kami 24/7.</p>
-                <p><i class="fas fa-envelope" style="color: var(--neon-blue);"></i> Email: <a href="mailto:support@rafzzstore.com" style="color: var(--neon-blue); text-decoration: none;">support@rafzzstore.com</a></p>
-                <p><i class="fas fa-phone" style="color: var(--neon-blue);"></i> Telepon: (+62) 812-XXXX-5678</p>
-            </div>
-        </section>
-
-        <div style="height: 50px;"></div>
-    </main>
-
-    <div id="bottom-nav">
-        <a href="#" data-target="home" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
-        <a href="#" data-target="products"><i class="fas fa-cube"></i> <span>Produk</span></a>
-        <a href="#" data-target="payment"><i class="fas fa-credit-card"></i> <span>Bayar</span></a>
-        <a href="#" data-target="description"><i class="fas fa-file-alt"></i> <span>Tentang</span></a>
-        <a href="#" data-target="profile"><i class="fas fa-user-circle"></i> <span>Profil</span></a>
-        <a href="#" data-target="contact"><i class="fas fa-headset"></i> <span>Kontak</span></a>
+        <div id="result">
+            <img id="vImg" class="thumb" src="" alt="Thumb">
+            <p id="vTitle" style="font-size: 0.7rem; color: var(--pink);"></p>
+            <a id="vLink" href="#" target="_blank" class="dl-btn">DOWNLOAD_NOW</a>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const sections = document.querySelectorAll('section');
-            const navLinks = document.querySelectorAll('#bottom-nav a');
-            const mainContent = document.getElementById('main-content');
-            
-            // --- SPA Navigation Logic with Transitions ---
-            function showSection(targetId) {
-                // Hilangkan kelas active dari semua section untuk memulai transisi keluar
-                sections.forEach(sec => sec.classList.remove('active'));
-                navLinks.forEach(link => link.classList.remove('active'));
-
-                const targetSection = document.getElementById(targetId);
-                if (targetSection) {
-                    // Tambahkan kelas active setelah sedikit delay untuk animasi masuk
-                    setTimeout(() => {
-                        targetSection.classList.add('active');
-                    }, 50); // Delay singkat agar animasi keluar terlihat dulu
-                }
-
-                const activeLink = document.querySelector(`#bottom-nav a[data-target="${targetId}"]`);
-                if (activeLink) {
-                    activeLink.classList.add('active');
-                }
-                
-                mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+        // Efek Hujan 💖 Love Riri
+        function spawnLove() {
+            for(let i=0; i<10; i++) {
+                const e = document.createElement('div');
+                e.className = 'emoji-react react-rain';
+                e.innerText = '💖';
+                e.style.left = (Math.random() * 90 + 5) + '%';
+                e.style.bottom = '20px';
+                document.querySelector('.container').appendChild(e);
+                setTimeout(() => e.remove(), 900);
             }
+        }
 
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('data-target');
-                    showSection(targetId);
-                });
-            });
-            
-        });
+        // Klik Global 💖
+        window.onclick = (e) => {
+            const hit = document.createElement('div');
+            hit.className = 'emoji-react react-click';
+            hit.innerText = '💖';
+            hit.style.left = e.pageX + 'px';
+            hit.style.top = e.pageY + 'px';
+            document.body.appendChild(hit);
+            setTimeout(() => hit.remove(), 1000);
+        }
+
+        async function proses(type) {
+            const link = document.getElementById('urlInput').value;
+            if(!link) return alert("TARGET NULL! 🗿");
+
+            spawnLove();
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+
+            try {
+                const res = await axios.get(`https://www.tikwm.com/api/?url=${encodeURIComponent(link)}`);
+                const data = res.data.data;
+
+                if(res.data.code === 0) {
+                    document.getElementById('vImg').src = data.cover;
+                    document.getElementById('vTitle').innerText = data.title.substring(0, 35) + "...";
+                    document.getElementById('vLink').href = (type === 'video' ? data.play : data.music);
+                    
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('result').style.display = 'block';
+                    spawnLove();
+                } else {
+                    alert("ERROR_FETCHING_DATA");
+                    document.getElementById('loader').style.display = 'none';
+                }
+            } catch (e) {
+                alert("CRITICAL_SYSTEM_ERROR");
+                document.getElementById('loader').style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>
